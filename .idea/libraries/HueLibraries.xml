@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="HueLibraries">
+    <CLASSES>
+      <root url="file://C:/HueLibraries" />
+    </CLASSES>
+    <JAVADOC />
+    <NATIVE>
+      <root url="file://C:/HueLibraries" />
+    </NATIVE>
+    <SOURCES />
+    <jarDirectory url="file://C:/HueLibraries" recursive="false" />
+  </library>
+</component>

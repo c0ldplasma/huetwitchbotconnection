@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: lib/huecppsdk-wrapper-javadoc.jar lib/huecppsdk-wrapper.ja
+ r lib/json-20180130.jar
+Main-Class: com.plasmarized.huedeepbot.main.Main
+
