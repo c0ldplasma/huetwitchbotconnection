@@ -51,6 +51,8 @@ public class BridgeManager {
 
     private ViewMain view;
 
+    private boolean tryedUPNP = false;
+
     /**
      * Only instance of this class (Singleton)
      */
@@ -58,7 +60,9 @@ public class BridgeManager {
 
     private BridgeManager () {
 
-        Persistence.setStorageLocation("C:/HueDeepbot", "HueDeepbot");
+        File persistence = new File("persistence/");
+        System.out.println(persistence.getAbsolutePath());
+        Persistence.setStorageLocation(persistence.getAbsolutePath(), "HueDeepbot");
         HueLog.setConsoleLogLevel(HueLog.LogLevel.INFO);
 
 
@@ -105,7 +109,7 @@ public class BridgeManager {
         disconnectFromBridge();
         bridgeDiscovery = new BridgeDiscovery();
         // ALL Include [UPNP, IPSCAN, NUPNP] but in some nets UPNP and NUPNP is not working properly
-        bridgeDiscovery.search(BridgeDiscovery.BridgeDiscoveryOption.ALL, bridgeDiscoveryCallback);
+        bridgeDiscovery.search(BridgeDiscovery.BridgeDiscoveryOption.IPSCAN, bridgeDiscoveryCallback);
         //updateUI(UIState.BridgeDiscoveryRunning, "Scanning the network for hue bridges...");
         System.out.println("Scanning the network for hue bridges...");
     }
@@ -161,8 +165,7 @@ public class BridgeManager {
     private BridgeDiscoveryCallback bridgeDiscoveryCallback = new BridgeDiscoveryCallback() {
         @Override
         public void onFinished(final List<BridgeDiscoveryResult> results, final ReturnCode returnCode) {
-            // Set to null to prevent stopBridgeDiscovery from stopping it
-            bridgeDiscovery = null;
+
 
             if (returnCode == ReturnCode.SUCCESS) {
                 //bridgeDiscoveryListView.setAdapter(new BridgeDiscoveryResultAdapter(getApplicationContext(), results));
@@ -173,7 +176,13 @@ public class BridgeManager {
                 //System.out.println("Connecting to the first in the list: " + results.get(0).getUniqueID());
                 //connectToBridge(results.get(0).getIP());
                 if (results.size() < 1) {
-                    view.appendLog("No Bridge found!");
+                    if (!tryedUPNP) {
+                        view.appendLog("No Bridge found with IPScan! Trying UPNP an NUPNP... (Can take up to 30 seconds)");
+                        bridgeDiscovery.search(BridgeDiscovery.BridgeDiscoveryOption.UPNP_AND_NUPNP, bridgeDiscoveryCallback);
+                        tryedUPNP = true;
+                    } else {
+                        view.appendLog("No Bridge found!");
+                    }
                 } else {
                     LinkedHashMap<String, String> foundBridges = new LinkedHashMap<>();
                     for (BridgeDiscoveryResult result : results) {
@@ -189,6 +198,8 @@ public class BridgeManager {
                 //updateUI(UIState.Idle, "Error doing bridge discovery: " + returnCode);
                 System.out.println("Error doing bridge discovery: " + returnCode);
             }
+            // Set to null to prevent stopBridgeDiscovery from stopping it
+            bridgeDiscovery = null;
         }
     };
 

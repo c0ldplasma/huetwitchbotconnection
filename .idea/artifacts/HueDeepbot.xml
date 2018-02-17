@@ -22,6 +22,9 @@
         <element id="library" level="project" name="HueLibraries" />
         <element id="file-copy" path="C:/HueLibraries/huesdk.dll" />
       </element>
+      <element id="file-copy" path="$PROJECT_DIR$/sequences.json" />
+      <element id="file-copy" path="$PROJECT_DIR$/sequenceExample.json" />
+      <element id="directory" name="persistence" />
     </root>
   </artifact>
 </component>

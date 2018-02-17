@@ -1,0 +1,6 @@
+Probleme von HueDeepbot
+-------------------------
+
+- Kekskrümel werden abgezogen auch wenn HueDeepbot nicht läuft
+
+- Parallele Ausführung von Sequenzen? Queue vs. Ausführung in HueDeepbot blocken vs. Deepbot cooldown bei commands

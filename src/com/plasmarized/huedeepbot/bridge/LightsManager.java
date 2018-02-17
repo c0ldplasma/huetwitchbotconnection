@@ -3,6 +3,7 @@ package com.plasmarized.huedeepbot.bridge;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -31,15 +32,22 @@ public class LightsManager {
 
         String sequencesString = "";
         File f = new File("sequences.json");
-        try (Scanner sc = new Scanner(f)) {
-            sequencesString = sc.useDelimiter("\\Z").next();
-        } catch (FileNotFoundException e) {
-            f.getParentFile().mkdirs();
-            try {
-                f.createNewFile();
+        if(!(f.exists() && !f.isDirectory())) {
+            try (PrintWriter writer = new PrintWriter(f)) {
+                writer.println("{");
+                writer.println("\"sequences\":{");
+                writer.println("}");
+                writer.println("}");
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+        }
+        try (Scanner sc = new Scanner(f)) {
+            while (sc.hasNext()) {
+                sequencesString += sc.next();
+            }
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
         }
 
         JSONObject json = new JSONObject(sequencesString);
@@ -47,7 +55,7 @@ public class LightsManager {
     }
 
     public void executeSequence(String sequenceName) {
-        Thread execution = new Thread("Test") {
+        Thread execution = new Thread(sequenceName) {
 
             public void run() {
                 JSONArray actions;
@@ -80,31 +88,58 @@ public class LightsManager {
 
     /**
      *
-     * @param lightId position in lights list
+     * @param lightId position in lights list or -1 for all lights
      * @param r red from 0-255
      * @param g green from 0-255
      * @param b blue from 0-255
      */
     private void changeLight(int lightId, int r, int g, int b) {
-        LightConfiguration lightConfiguration = lights.get(lightId).getLightConfiguration();
+        if (lightId == -1) {
+            for (LightPoint lightPoint : lights) {
+                LightConfiguration lightConfiguration = lightPoint.getLightConfiguration();
 
-        HueColor color = new HueColor(
-                new HueColor.RGB(r, g, b),
-                lightConfiguration.getModelIdentifier(),
-                lightConfiguration.getSwVersion());
+                HueColor color = new HueColor(
+                        new HueColor.RGB(r, g, b),
+                        lightConfiguration.getModelIdentifier(),
+                        lightConfiguration.getSwVersion());
 
-        LightState lightState = new LightState();
-        lightState.setXY(color.getXY().x, color.getXY().y);
+                LightState lightState = new LightState();
+                lightState.setTransitionTime(10);
+                lightState.setXY(color.getXY().x, color.getXY().y);
 
-        lights.get(lightId).updateState(lightState, BridgeConnectionType.LOCAL, new BridgeResponseCallback() {
-            @Override
-            public void handleCallback(Bridge bridge, ReturnCode returnCode, List responses, List errors) {
-                //if (returnCode == ReturnCode.SUCCESS) {
-                    // ...
-                //} else {
-                    // ...
-                //}
+                lightPoint.updateState(lightState, BridgeConnectionType.LOCAL, new BridgeResponseCallback() {
+                    @Override
+                    public void handleCallback(Bridge bridge, ReturnCode returnCode, List responses, List errors) {
+                        //if (returnCode == ReturnCode.SUCCESS) {
+                        // ...
+                        //} else {
+                        // ...
+                        //}
+                    }
+                });
             }
-        });
+        } else {
+            LightConfiguration lightConfiguration = lights.get(lightId).getLightConfiguration();
+
+            HueColor color = new HueColor(
+                    new HueColor.RGB(r, g, b),
+                    lightConfiguration.getModelIdentifier(),
+                    lightConfiguration.getSwVersion());
+
+            LightState lightState = new LightState();
+            lightState.setTransitionTime(10);
+            lightState.setXY(color.getXY().x, color.getXY().y);
+
+            lights.get(lightId).updateState(lightState, BridgeConnectionType.LOCAL, new BridgeResponseCallback() {
+                @Override
+                public void handleCallback(Bridge bridge, ReturnCode returnCode, List responses, List errors) {
+                    //if (returnCode == ReturnCode.SUCCESS) {
+                    // ...
+                    //} else {
+                    // ...
+                    //}
+                }
+            });
+        }
     }
 }

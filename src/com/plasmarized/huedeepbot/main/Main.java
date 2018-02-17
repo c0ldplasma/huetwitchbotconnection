@@ -24,8 +24,11 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("Stage is closing");
             Platform.runLater(() -> view.appendLog("Shutdown Api Server..."));
-            server.closeServer();
-
+            try {
+                server.closeServer();
+            } catch (NullPointerException e) {
+                System.out.println("Could not close server because its not running.");
+            }
         });
 
         bridges = BridgeManager.getInstance();
@@ -34,7 +37,7 @@ public class Main extends Application {
         try {
             server = new DeepbotApiServer();
         } catch (IOException e) {
-            e.printStackTrace();
+            view.appendLog("Port already in use! HueDeepbot already running?");
         }
 
     }

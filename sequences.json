@@ -1,0 +1,14 @@
+{
+  "sequences":{
+    "LichtAus": [
+      { "type": "light", "light-id": 1, "r": 0, "g": 0, "b": 0, "transitionTime": 0},
+      { "type": "sleep", "duration": 5000},
+      { "type": "light", "light-id": 1, "r": -1, "g": -1, "b": -1, "transitionTime": 500}
+    ],
+    "Blitz":	[
+      { "type": "light", "light-id": 1, "r": 255, "g": 255, "b": 255, "transitionTime": 0},
+      { "type": "sleep", "duration": 50},
+      { "type": "light", "light-id": 1, "r": -1, "g": -1, "b": -1, "transitionTime": 0}
+    ]
+  }
+}

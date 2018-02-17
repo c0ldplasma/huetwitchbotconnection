@@ -42,7 +42,7 @@ public class ViewMain {
             root = new BorderPane();
             root.setTop(taLog);
 
-            Scene scene = new Scene(root, 400,400);
+            Scene scene = new Scene(root, 650,400);
             scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 
             primaryStage.setTitle("HueDeepbot");
