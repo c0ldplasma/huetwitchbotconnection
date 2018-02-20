@@ -270,6 +270,7 @@ public class BridgeManager {
 
                 case LIGHTS_AND_GROUPS:
                     view.appendLog("Light updated!");
+                    updateLights();
                     break;
 
                 default:
@@ -280,5 +281,10 @@ public class BridgeManager {
 
     public void executeSequence(String sequenceName) {
         lights.executeSequence(sequenceName);
+    }
+
+    private void updateLights() {
+        List<LightPoint> li = (List<LightPoint>)(List<? extends Device>)bridge.getBridgeState().getDevices(DomainType.LIGHT_POINT);
+        lights.setLights(li);
     }
 }

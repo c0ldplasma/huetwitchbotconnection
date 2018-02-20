@@ -37,7 +37,7 @@ public class DeepbotApiServer {
         @Override
         public void handle(HttpExchange call) throws IOException {
             System.out.println(call.getRequestURI());
-            String resp = "";
+            String resp = " ";
             call.sendResponseHeaders(200, resp.length());
             OutputStream os = call.getResponseBody();
             os.write(resp.getBytes());
