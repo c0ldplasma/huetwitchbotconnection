@@ -44,7 +44,7 @@ public class DeepbotApiServer {
             os.close();
 
             Map<String, String> result = queryToMap(call.getRequestURI().getQuery());
-            BridgeManager.getInstance().executeSequence(result.get("sequence"));
+            BridgeManager.getInstance().executeSequence(result.get("sequence"), result.get("thread"));
         }
     }
 

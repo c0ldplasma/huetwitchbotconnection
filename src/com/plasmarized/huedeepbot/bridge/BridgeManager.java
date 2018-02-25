@@ -1,10 +1,8 @@
 package com.plasmarized.huedeepbot.bridge;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 import com.philips.lighting.hue.sdk.wrapper.HueLog;
 import com.philips.lighting.hue.sdk.wrapper.Persistence;
@@ -279,12 +277,16 @@ public class BridgeManager {
         }
     };
 
-    public void executeSequence(String sequenceName) {
-        lights.executeSequence(sequenceName);
+    public void executeSequence(String sequenceName, String threadPoolName) {
+        lights.executeSequence(sequenceName, threadPoolName);
     }
 
     private void updateLights() {
         List<LightPoint> li = (List<LightPoint>)(List<? extends Device>)bridge.getBridgeState().getDevices(DomainType.LIGHT_POINT);
         lights.setLights(li);
+    }
+
+    public Map<String, ExecutorService> getQueues() {
+        return lights!=null?lights.getQueues():null;
     }
 }

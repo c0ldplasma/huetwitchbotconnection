@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
 import com.philips.lighting.hue.sdk.wrapper.domain.clip.DoublePair;
 import org.json.JSONArray;
@@ -28,6 +26,8 @@ public class LightsManager {
     private List<LightPoint> lights;
 
     private JSONObject sequences;
+
+    Map<String, ExecutorService> queues = new HashMap<>();
 
     LightsManager(List<LightPoint> lights) {
         this.lights = lights;
@@ -60,17 +60,21 @@ public class LightsManager {
      * Executes a sequence defined in sequences.json
      * @param sequenceName defined in sequences.json
      */
-    public void executeSequence(String sequenceName) {
-        Thread execution = new Thread(sequenceName) {
+    public void executeSequence(String sequenceName, String threadPoolName) {
+
+        final String tPoolName = (threadPoolName==null) ? "default":threadPoolName;
+
+        Runnable task = new Runnable() {
 
             private List<DoublePair> oldXYs;
-            private double[] oldBrightnesses;
+            private int[] oldBrightnesses;
 
             public void run() {
+                System.out.println("Start execution: " + tPoolName);
 
                 //Store current light values for later reset operations
                 oldXYs = new ArrayList<>();
-                oldBrightnesses = new double[lights.size()];
+                oldBrightnesses = new int[lights.size()];
                 for (int i = 0; i < lights.size(); i++) {
                     oldXYs.add(lights.get(i).getLightState().getXY());
                     oldBrightnesses[i] = lights.get(i).getLightState().getBrightness();
@@ -97,50 +101,146 @@ public class LightsManager {
                     try {
                         TimeUnit.MILLISECONDS.sleep(action.getLong("duration"));
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        System.out.println("Sleep Interrupted! Program probably got shut down...");
                     }
                 } else if (actionType.equals("light")) {
-                    int transTime = action.getInt("transitionTime");
-                    boolean on = action.getInt("r") != 0
-                            || action.getInt("g") != 0
-                            || action.getInt("b") != 0;
+                    int lightID = action.getInt("light-id");
 
-                    if (action.getInt("light-id") == -1) { //All lights
+                    int transTime = action.getInt("transitionTime");
+
+                    boolean isRGB = action.has("r");
+
+                    int r = 0, g = 0, b = 0;
+                    double h = 0, s = 0, v = 0;
+                    if (isRGB) {
+                        r = action.getInt("r");
+                        g = action.getInt("g");
+                        b = action.getInt("b");
+                    } else {
+                        h = action.getDouble("h");
+                        s = action.getDouble("s");
+                        v = action.getDouble("v");
+                    }
+
+                    if (lightID == -1) { //All lights
                         for (int lightIndex = 0; lightIndex < lights.size(); lightIndex++) {
-                            HueColor color;
-                            if (action.getInt("r") == -1) {
-                                color = createHueColor(lightIndex, oldXYs.get(lightIndex).getValue1(), oldXYs.get(lightIndex).getValue2(), oldBrightnesses[lightIndex]);
+                            if (isRGB) {
+                                changeLight(lightIndex, r, g, b, transTime);
                             } else {
-                                color = createHueColor(lightIndex, action.getInt("r"), action.getInt("g"), action.getInt("b"));
+                                changeLight(lightIndex, h, s, v, transTime);
                             }
-                            changeLight(lightIndex, color, transTime, on);
                         }
-                    } else {                                   //One specific light
-                        int lightID = action.getInt("light-id");
-                        if (action.getInt("r") == -1) {
-                            changeLight(lightID, createHueColor(lightID, oldXYs.get(lightID).getValue1(), oldXYs.get(lightID).getValue2(), oldBrightnesses[lightID]), transTime, on);
+                    } else { //One specific light
+                        if (isRGB) {
+                            changeLight(lightID, r, g, b, transTime);
                         } else {
-                            changeLight(lightID, createHueColor(lightID, action.getInt("r"), action.getInt("g"), action.getInt("b")), transTime, on);
+                            changeLight(lightID, h, s, v, transTime);
                         }
                     }
                 }
             }
+
+            /**
+             * @param lightID position in lights list or -1 for all lights
+             * @param r red -1 - 255
+             * @param g green -1 - 255
+             * @param b blue -1 - 255
+             */
+            private void changeLight(int lightID, int r, int g, int b, int transTime) {
+
+                HueColor color;
+                boolean on;
+
+                if (r == -1) {
+                    color = getOldColor(lightID);
+                    on = color.getXY().x != 0 || color.getXY().y != 0 || color.getBrightness() != 0;
+                } else {
+                    color = createHueColorRGB(lightID, r, g, b);
+                    on = r != 0 || g != 0 || b != 0;
+                }
+
+                LightState lightState = new LightState();
+                lightState.setOn(on);
+                lightState.setTransitionTime(transTime);
+                lightState.setXY(color.getXY().x, color.getXY().y);
+                lightState.setBrightness((int)(color.getBrightness()*255));
+
+                lights.get(lightID).updateState(lightState, BridgeConnectionType.LOCAL, new BridgeResponseCallback() {
+                    @Override
+                    public void handleCallback(Bridge bridge, ReturnCode returnCode, List responses, List errors) {
+                        //if (returnCode == ReturnCode.SUCCESS) {
+                        // ...
+                        //} else {
+                        // ...
+                        //}
+                    }
+                });
+            }
+            /**
+             * @param lightID position in lights list or -1 for all lights
+             * @param h hue 0-360
+             * @param s saturation 0-100 (%)
+             * @param v value 0-100 (%)
+             */
+            private void changeLight(int lightID, double h, double s, double v, int transTime) {
+
+                HueColor color;
+                boolean on;
+
+                if (v == -1) {
+                    color = getOldColor(lightID);
+                    on = color.getXY().x != 0 || color.getXY().y != 0 || color.getBrightness() != 0;
+                } else {
+                    System.out.println("h: " + h + " s: " + s + " v: " + v);
+                    color = createHueColorHSV(lightID, h, s, v);
+                    System.out.println("h: " + color.getHSV().h + " s: " + color.getHSV().s + " v: " + color.getHSV().v);
+                    System.out.println("r: " + color.getRGB().r + " g: " + color.getRGB().g + " b: " + color.getRGB().b);
+                    on = v != 0;
+                }
+
+                LightState lightState = new LightState();
+                lightState.setOn(on);
+                lightState.setTransitionTime(transTime);
+                lightState.setXY(color.getXY().x, color.getXY().y);
+                lightState.setBrightness((int)(color.getBrightness()*255));
+
+                lights.get(lightID).updateState(lightState, BridgeConnectionType.LOCAL, new BridgeResponseCallback() {
+                    @Override
+                    public void handleCallback(Bridge bridge, ReturnCode returnCode, List responses, List errors) {
+                        //if (returnCode == ReturnCode.SUCCESS) {
+                        // ...
+                        //} else {
+                        // ...
+                        //}
+                    }
+                });
+            }
+
+            private HueColor getOldColor(int lightID) {
+                double oldX = oldXYs.get(lightID).getValue1();
+                double oldY = oldXYs.get(lightID).getValue2();
+                int oldB = oldBrightnesses[lightID];
+                return createHueColorXYB(lightID, oldX, oldY, oldB);
+            }
         };
-        System.out.println(execution.getName());
-        execution.start();
+
+        if (queues.get(tPoolName) == null) {
+            queues.put(tPoolName, Executors.newSingleThreadExecutor());
+        }
+        queues.get(tPoolName).submit(task);
     }
 
-    private HueColor createHueColor(int lightId, double x, double y, double brightness) {
+    private HueColor createHueColorXYB(int lightId, double x, double y, int brightness) {
         LightConfiguration lightConfiguration = lights.get(lightId).getLightConfiguration();
 
         return new HueColor(
                 new HueColor.XY(x, y),
-                brightness,
+                ((double)brightness)/255,
                 lightConfiguration.getModelIdentifier(),
                 lightConfiguration.getSwVersion());
     }
 
-    private HueColor createHueColor(int lightId, int r, int g, int b) {
+    private HueColor createHueColorRGB(int lightId, int r, int g, int b) {
         LightConfiguration lightConfiguration = lights.get(lightId).getLightConfiguration();
 
         return new HueColor(
@@ -149,31 +249,21 @@ public class LightsManager {
                 lightConfiguration.getSwVersion());
     }
 
-    /**
-     *
-     * @param lightId position in lights list or -1 for all lights
-     * @param color color created by createHueColor method
-     */
-    private void changeLight(int lightId, HueColor color, int transTime, boolean on) {
+    private HueColor createHueColorHSV(int lightId, double h, double s, double v) {
+        LightConfiguration lightConfiguration = lights.get(lightId).getLightConfiguration();
 
-            LightState lightState = new LightState();
-            lightState.setOn(on);
-            lightState.setTransitionTime(transTime);
-            lightState.setXY(color.getXY().x, color.getXY().y);
-
-            lights.get(lightId).updateState(lightState, BridgeConnectionType.LOCAL, new BridgeResponseCallback() {
-                @Override
-                public void handleCallback(Bridge bridge, ReturnCode returnCode, List responses, List errors) {
-                    //if (returnCode == ReturnCode.SUCCESS) {
-                    // ...
-                    //} else {
-                    // ...
-                    //}
-                }
-            });
+        return new HueColor(
+                new HueColor.HSV(h, s, v),
+                lightConfiguration.getModelIdentifier(),
+                lightConfiguration.getSwVersion());
     }
+
 
     public void setLights(List<LightPoint> lights) {
         this.lights = lights;
+    }
+
+    public Map<String, ExecutorService> getQueues() {
+        return queues;
     }
 }

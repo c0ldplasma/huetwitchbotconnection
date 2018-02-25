@@ -1,6 +1,6 @@
 Probleme von HueDeepbot
 -------------------------
 
-- TransitionTime  --------------------------- check
-- Befehle nacheinander/parallel ------------- ToDo
-- Lampe ganz aus ---------------------------- check
+- TransitionTime  --------------------------- fixed
+- Befehle nacheinander/parallel ------------- fixed
+- Lampe ganz aus ---------------------------- fixed

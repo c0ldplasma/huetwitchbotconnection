@@ -1,8 +1,13 @@
 package com.plasmarized.huedeepbot.main;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 
+import com.philips.lighting.hue.sdk.wrapper.domain.Bridge;
 import com.plasmarized.huedeepbot.api.DeepbotApiServer;
 import com.plasmarized.huedeepbot.bridge.BridgeManager;
 import javafx.application.Application;
@@ -23,6 +28,16 @@ public class Main extends Application {
 
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("Stage is closing");
+
+            Map<String, ExecutorService> queues = BridgeManager.getInstance().getQueues();
+            if (queues != null) {
+                for (Map.Entry<String, ExecutorService> entry : queues.entrySet()) {
+                    entry.getValue().shutdownNow();
+                }
+            }
+
+            System.out.println("Executors shut down");
+
             Platform.runLater(() -> view.appendLog("Shutdown Api Server..."));
             try {
                 server.closeServer();
