@@ -27,12 +27,11 @@ public class LightsManager {
 
     private JSONObject sequences;
 
-    Map<String, ExecutorService> queues = new HashMap<>();
+    private Map<String, ExecutorService> queues = new HashMap<>();
 
     LightsManager(List<LightPoint> lights) {
         this.lights = lights;
 
-        String sequencesString = "";
         File f = new File("sequences.json");
         if(!(f.exists() && !f.isDirectory())) {
             try (PrintWriter writer = new PrintWriter(f)) {
@@ -44,9 +43,12 @@ public class LightsManager {
                 e1.printStackTrace();
             }
         }
+
+        StringBuilder sequencesString = new StringBuilder();
         try (Scanner sc = new Scanner(f)) {
+
             while (sc.hasNext()) {
-                sequencesString += sc.next();
+                sequencesString.append(sc.next());
             }
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
@@ -72,11 +74,20 @@ public class LightsManager {
             public void run() {
                 System.out.println("Start execution: " + tPoolName);
 
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);  // Give last executed sequence 100ms time to return to old light state
+                } catch (InterruptedException e) {
+                    System.out.println("Sleep Interrupted! Program probably got shut down...");
+                }
+
                 //Store current light values for later reset operations
                 oldXYs = new ArrayList<>();
                 oldBrightnesses = new int[lights.size()];
+                System.out.println("ALTE WERTE");
+                System.out.println("--------------------");
                 for (int i = 0; i < lights.size(); i++) {
                     oldXYs.add(lights.get(i).getLightState().getXY());
+                    System.out.println(lights.get(i).getLightState().getBrightness());
                     oldBrightnesses[i] = lights.get(i).getLightState().getBrightness();
                 }
 
@@ -117,7 +128,7 @@ public class LightsManager {
                         g = action.getInt("g");
                         b = action.getInt("b");
                     } else {
-                        h = action.getDouble("h");
+                        h = action.getDouble("h")/360;
                         s = action.getDouble("s");
                         v = action.getDouble("v");
                     }
