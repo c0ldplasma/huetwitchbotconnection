@@ -1,4 +1,4 @@
-Possible values for variables in sequences.json
+Allowed values for variables in sequences.json
 ---------------------------------------------------
 
 "type": "light" | "sleep"
