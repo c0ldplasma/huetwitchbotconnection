@@ -19,7 +19,6 @@
         </element>
       </element>
       <element id="directory" name="lib">
-        <element id="library" level="project" name="HueLibraries" />
         <element id="file-copy" path="C:/HueLibraries/huesdk.dll" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/sequences.json" />

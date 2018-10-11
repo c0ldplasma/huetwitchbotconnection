@@ -281,12 +281,16 @@ public class BridgeManager {
         lights.executeSequence(sequenceName, threadPoolName);
     }
 
-    private void updateLights() {
+    public void updateLights() {
         List<LightPoint> li = (List<LightPoint>)(List<? extends Device>)bridge.getBridgeState().getDevices(DomainType.LIGHT_POINT);
         lights.setLights(li);
     }
 
     public Map<String, ExecutorService> getQueues() {
         return lights!=null?lights.getQueues():null;
+    }
+
+    public Bridge getBridge() {
+        return this.bridge;
     }
 }

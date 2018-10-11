@@ -7,6 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="HueLibraries" level="project" />
+    <orderEntry type="library" exported="" name="huecppsdk-wrapper" level="project" />
+    <orderEntry type="library" exported="" name="json-20180813" level="project" />
+    <orderEntry type="library" exported="" name="javafx" level="project" />
   </component>
 </module>

@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.concurrent.*;
 
+import com.philips.lighting.hue.sdk.wrapper.connection.BridgeStateCacheType;
 import com.philips.lighting.hue.sdk.wrapper.domain.clip.DoublePair;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +29,9 @@ public class LightsManager {
     private JSONObject sequences;
 
     private Map<String, ExecutorService> queues = new HashMap<>();
+
+    private List<DoublePair> oldXYs;
+    private int[] oldBrightnesses;
 
     LightsManager(List<LightPoint> lights) {
         this.lights = lights;
@@ -68,29 +72,25 @@ public class LightsManager {
 
         Runnable task = new Runnable() {
 
-            private List<DoublePair> oldXYs;
-            private int[] oldBrightnesses;
-
             public void run() {
+
                 System.out.println("Start execution: " + tPoolName);
 
                 try {
-                    TimeUnit.MILLISECONDS.sleep(100);  // Give last executed sequence 100ms time to return to old light state
+                    TimeUnit.MILLISECONDS.sleep(500);  // Give last executed sequence 100ms time to return to old light state
                 } catch (InterruptedException e) {
                     System.out.println("Sleep Interrupted! Program probably got shut down...");
                 }
 
-                //Store current light values for later reset operations
-                oldXYs = new ArrayList<>();
-                oldBrightnesses = new int[lights.size()];
-                System.out.println("ALTE WERTE");
-                System.out.println("--------------------");
-                for (int i = 0; i < lights.size(); i++) {
-                    oldXYs.add(lights.get(i).getLightState().getXY());
-                    System.out.println(lights.get(i).getLightState().getBrightness());
-                    oldBrightnesses[i] = lights.get(i).getLightState().getBrightness();
-                }
+                BridgeManager.getInstance().getBridge().getBridgeConnection(BridgeConnectionType.LOCAL).getHeartbeatManager().performOneHeartbeat(BridgeStateCacheType.LIGHTS_AND_GROUPS);
+                BridgeManager.getInstance().getBridge().getBridgeConnection(BridgeConnectionType.LOCAL).getHeartbeatManager().performOneHeartbeat(BridgeStateCacheType.SCENES);
 
+                try {
+                    TimeUnit.MILLISECONDS.sleep(500);  // Give last executed sequence 100ms time to return to old light state
+                } catch (InterruptedException e) {
+                    System.out.println("Sleep Interrupted! Program probably got shut down...");
+                }
+                BridgeManager.getInstance().updateLights();
 
                 JSONArray actions;
                 try {
@@ -174,7 +174,6 @@ public class LightsManager {
                 lightState.setOn(on);
                 lightState.setTransitionTime(transTime);
                 lightState.setXY(color.getXY().x, color.getXY().y);
-                lightState.setBrightness((int)(color.getBrightness()*255));
 
                 lights.get(lightID).updateState(lightState, BridgeConnectionType.LOCAL, new BridgeResponseCallback() {
                     @Override
@@ -272,6 +271,15 @@ public class LightsManager {
 
     public void setLights(List<LightPoint> lights) {
         this.lights = lights;
+        this.oldXYs = new ArrayList<DoublePair>();
+        this.oldBrightnesses = new int[lights.size()];
+        System.out.println("ALTE WERTE");
+        System.out.println("--------------------");
+        for (int i = 0; i < lights.size(); ++i) {
+            this.oldXYs.add(lights.get(i).getLightState().getXY());
+            System.out.println(lights.get(i).getLightState().getXY().getValue1());
+            this.oldBrightnesses[i] = lights.get(i).getLightState().getBrightness();
+        }
     }
 
     public Map<String, ExecutorService> getQueues() {

@@ -1,11 +1,14 @@
 package com.plasmarized.huedeepbot.api;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import com.plasmarized.huedeepbot.bridge.BridgeManager;
 import com.sun.net.httpserver.HttpExchange;
@@ -18,11 +21,27 @@ public class DeepbotApiServer {
 
     private final int PORT = 8000;
 
+    private final String resp;
+
     public DeepbotApiServer() throws IOException {
         server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/api", new MyHandler());
         server.setExecutor(null); // creates a default executor
         server.start();
+
+        File f = new File("response.txt");
+        StringBuilder sequencesString = new StringBuilder();
+        try {
+            try (Scanner sc = new Scanner(f).useDelimiter("'");){
+                while (sc.hasNext()) {
+                    sequencesString.append(sc.next());
+                }
+            }
+        }
+        catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
+        this.resp = sequencesString.toString();
     }
 
     public void closeServer() {
@@ -37,7 +56,6 @@ public class DeepbotApiServer {
         @Override
         public void handle(HttpExchange call) throws IOException {
             System.out.println(call.getRequestURI());
-            String resp = " ";
             call.sendResponseHeaders(200, resp.length());
             OutputStream os = call.getResponseBody();
             os.write(resp.getBytes());
