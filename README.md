@@ -5,7 +5,9 @@ Allowed values for variables in sequences.json
 	for "light" -> "light-id" & "r" & "g" & "b" & "transitionTime"\
 			or  -> "light-id" & "h" & "s" & "v" & "transitionTime"\
 	for "sleep" -> "duration"\
-
+	
+| Key                                  | Description                                                          |
+|--------------------------------------|----------------------------------------------------------------------|
 | "duration": 0-2147483647			   | do nothing for x milliseconds |
 | "light-id": 0-(lightCount - 1) | -1	   | -1 is for selecting all lights |
 | "r" "g" "b": 0-255 | -1                | -1 is for setting the value from before executing the sequence |
