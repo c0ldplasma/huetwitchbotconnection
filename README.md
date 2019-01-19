@@ -16,7 +16,7 @@
 | "transitionTime": 0,1,2,3,4....           | transition time in 100ms steps                                       |
 
 #Example
-<code>
+```json
 {
   "sequences":{
     "LichtAus": [
@@ -31,4 +31,4 @@
     ]
   }
 }
-</code>
+```
