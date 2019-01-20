@@ -52,7 +52,7 @@ A custom JRE can be built with the jlink tool included in the JDK.
 Since version 0.0.13 the gradle build system is used. 
 
 1. To build the application first run the build task the the createExe task.
-1. Copy the huecppsdk-wrapper.jar and the huesdk.dll from ./[project folder]/lib to ./[project folder]/build/launch4j/lib
+1. Copy the huesdk.dll from ./[project folder]/lib to ./[project folder]/build/launch4j/lib
 1. Copy the jre-11-huedeepbot folder to ./[project folder]/build/launch4j/lib
 1. Copy the sequences.json and the response.txt from ././[project folder] to ./[project folder]/build/launch4j
 1. Create a folder named persistence in ./[project folder]/build/launch4j
