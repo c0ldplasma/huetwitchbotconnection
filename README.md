@@ -49,7 +49,7 @@ A custom JRE can be built with the jlink tool included in the JDK.
 
 #### Building the application
 
-Since version 0.0.13 the gradle build system is used. 
+Since version 0.0.13 the gradle build system is used. Gradle version 5.1.1.
 
 1. To build the application first run the build task the the createExe task.
 1. Copy the huesdk.dll from ./[project folder]/lib to ./[project folder]/build/launch4j/lib
