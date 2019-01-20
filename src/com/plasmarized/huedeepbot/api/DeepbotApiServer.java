@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-
 import com.plasmarized.huedeepbot.bridge.BridgeManager;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -32,7 +30,7 @@ public class DeepbotApiServer {
         File f = new File("response.txt");
         StringBuilder sequencesString = new StringBuilder();
         try {
-            try (Scanner sc = new Scanner(f).useDelimiter("'");){
+            try (Scanner sc = new Scanner(f).useDelimiter("'")){
                 while (sc.hasNext()) {
                     sequencesString.append(sc.next());
                 }
@@ -62,6 +60,7 @@ public class DeepbotApiServer {
             os.close();
 
             Map<String, String> result = queryToMap(call.getRequestURI().getQuery());
+            System.out.println("Sequence: " + result.get("sequence") + "  Thread: " + result.get("thread"));
             BridgeManager.getInstance().executeSequence(result.get("sequence"), result.get("thread"));
         }
     }
@@ -69,7 +68,7 @@ public class DeepbotApiServer {
     private Map<String, String> queryToMap(String query){
         Map<String, String> result = new HashMap<>();
         for (String param : query.split("&")) {
-            String pair[] = param.split("=");
+            String[] pair = param.split("=");
             if (pair.length>1) {
                 result.put(pair[0], pair[1]);
             }else{

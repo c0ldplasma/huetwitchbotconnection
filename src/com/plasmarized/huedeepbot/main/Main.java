@@ -1,13 +1,8 @@
 package com.plasmarized.huedeepbot.main;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-
-
-import com.philips.lighting.hue.sdk.wrapper.domain.Bridge;
 import com.plasmarized.huedeepbot.api.DeepbotApiServer;
 import com.plasmarized.huedeepbot.bridge.BridgeManager;
 import javafx.application.Application;

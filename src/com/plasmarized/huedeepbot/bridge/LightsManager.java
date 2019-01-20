@@ -5,22 +5,22 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.concurrent.*;
-
-import com.philips.lighting.hue.sdk.wrapper.connection.BridgeStateCacheType;
-import com.philips.lighting.hue.sdk.wrapper.domain.clip.DoublePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import com.philips.lighting.hue.sdk.wrapper.connection.BridgeConnectionType;
 import com.philips.lighting.hue.sdk.wrapper.connection.BridgeResponseCallback;
+import com.philips.lighting.hue.sdk.wrapper.connection.BridgeStateCacheType;
 import com.philips.lighting.hue.sdk.wrapper.domain.Bridge;
 import com.philips.lighting.hue.sdk.wrapper.domain.ReturnCode;
+import com.philips.lighting.hue.sdk.wrapper.domain.clip.DoublePair;
 import com.philips.lighting.hue.sdk.wrapper.domain.device.light.LightConfiguration;
 import com.philips.lighting.hue.sdk.wrapper.domain.device.light.LightPoint;
 import com.philips.lighting.hue.sdk.wrapper.domain.device.light.LightState;
 import com.philips.lighting.hue.sdk.wrapper.utilities.HueColor;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LightsManager {
 
@@ -271,7 +271,7 @@ public class LightsManager {
 
     public void setLights(List<LightPoint> lights) {
         this.lights = lights;
-        this.oldXYs = new ArrayList<DoublePair>();
+        this.oldXYs = new ArrayList<>();
         this.oldBrightnesses = new int[lights.size()];
         System.out.println("ALTE WERTE");
         System.out.println("--------------------");

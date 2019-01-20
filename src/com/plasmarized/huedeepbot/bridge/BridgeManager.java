@@ -49,7 +49,7 @@ public class BridgeManager {
 
     private ViewMain view;
 
-    private boolean tryedUPNP = false;
+    private boolean triedUPNP = false;
 
     /**
      * Only instance of this class (Singleton)
@@ -174,10 +174,10 @@ public class BridgeManager {
                 //System.out.println("Connecting to the first in the list: " + results.get(0).getUniqueID());
                 //connectToBridge(results.get(0).getIP());
                 if (results.size() < 1) {
-                    if (!tryedUPNP) {
+                    if (!triedUPNP) {
                         view.appendLog("No Bridge found with IPScan! Trying UPNP an NUPNP... (Can take up to 30 seconds)");
                         bridgeDiscovery.search(BridgeDiscovery.BridgeDiscoveryOption.UPNP_AND_NUPNP, bridgeDiscoveryCallback);
-                        tryedUPNP = true;
+                        triedUPNP = true;
                     } else {
                         view.appendLog("No Bridge found!");
                     }

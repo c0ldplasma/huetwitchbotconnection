@@ -21,25 +21,16 @@
  */
 package com.plasmarized.huedeepbot.main;
 
-import com.plasmarized.huedeepbot.bridge.BridgeManager;
-import com.plasmarized.huedeepbot.customnodes.LogArea;
-import java.lang.invoke.StringConcatFactory;
-import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
+import com.plasmarized.huedeepbot.bridge.BridgeManager;
+import com.plasmarized.huedeepbot.customnodes.LogArea;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -63,9 +54,9 @@ public class ViewMain {
             this.root = new BorderPane();
             this.root.setTop(this.taLog);
             Scene scene = new Scene(this.root, 650.0, 400.0);
-            scene.getStylesheets().add(this.getClass().getResource("application.css").toExternalForm());
+            //scene.getStylesheets().add(this.getClass().getResource("application.css").toExternalForm());
             this.primaryStage.setTitle("HueDeepbot");
-            this.primaryStage.getIcons().addAll(new Image[]{new Image("file:icons/icon.png"), new Image("file:icons/icon16.png")});
+            this.primaryStage.getIcons().addAll(new Image("file:icons/icon.png"), new Image("file:icons/icon16.png"));
             this.primaryStage.setScene(scene);
             this.primaryStage.show();
         }
@@ -82,7 +73,7 @@ public class ViewMain {
                 String bridgeIP = (String)entry.getValue();
                 items.add("Bridge: " + bridgeID + ", IP: " + bridgeIP);
             }
-            this.lvBridges = new ListView();
+            this.lvBridges = new ListView<>();
             this.lvBridges.setItems(items);
             this.root.setCenter(this.lvBridges);
             Button btnConnect = new Button("Connect");
@@ -92,7 +83,7 @@ public class ViewMain {
                     BridgeManager.getInstance().connectToBridge(selectedBridge);
                 }
             });
-            this.root.setBottom((Node)btnConnect);
+            this.root.setBottom(btnConnect);
         });
     }
 
