@@ -39,10 +39,20 @@ The changes in the licence model and the distribution of java made by oracle mad
 
 #### Building the custom JRE
 
-A custom JRE can be built with the jlink tool included in the JDK.\
+A custom JRE can be built with the jlink tool included in the JDK.
 
 1. Download javafx-jmods from https://gluonhq.com/products/javafx/
 1. Extract to a folder of your choice.
 1. Add all needed modules to the following command.
 1. jlink --module-path "[javafx-jmods folder]" --add-modules java.base,javafx.controls,jdk.httpserver --output jre-11-huedeepbot --strip-debug --compress 2 --no-header-files --no-man-pages
 1. You now have your own jre in the jre-11-huedeepbot folder.
+
+#### Building the application
+
+Since version 0.0.13 the gradle build system is used. 
+
+1. To build the application first run the build task the the createExe task.
+1. Copy the huecppsdk-wrapper.jar and the huesdk.dll from ./[project folder]/lib to ./[project folder]/build/launch4j/lib
+1. Copy the jre-11-huedeepbot folder to ./[project folder]/build/launch4j/lib
+1. Copy the sequences.json and the response.txt from ././[project folder] to ./[project folder]/build/launch4j
+1. Create a folder named persistence in ./[project folder]/build/launch4j
