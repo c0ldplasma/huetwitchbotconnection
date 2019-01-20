@@ -58,5 +58,6 @@ Since version 0.0.13 the gradle build system is used.
 1. Copy the sequences.json and the response.txt from ././[project folder] to ./[project folder]/build/launch4j
 1. Copy folder ./[project folder]/icons to ./[project folder]/build/launch4j/icons and remove the icon.ico file.
 1. Create a folder named persistence in ./[project folder]/build/launch4j
+1. Rename/copy the launch4j folder to HueDeepbot-[version] and zip it.
 
 For debugging the HueDeepbot.exe change headerType from 'gui' to 'console' in the build.gradle file.
