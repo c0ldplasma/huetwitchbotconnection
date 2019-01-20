@@ -31,3 +31,18 @@ The light sequences are defined in the sequences.json file.
   }
 }
 ```
+
+## Deployment
+### Java 11+
+
+The changes in the licence model and the distribution of java made by oracle made it necessary to bundle a Java JRE with the Application. Furthermore it is not possible to use the OracleJDK anymore. Instead it is needed to use a OpenJDK version. Since Java 11 OracleJDK and OpenJDK are functionally identical, but differ in the license. Basically OracleJDK is now only for paid customers of Oracle while OpenJDK is completely free to use. (no claim to correctness)
+
+#### Building the custom JRE
+
+A custom JRE can be built with the jlink tool included in the JDK.\
+
+1. Download javafx-jmods from https://gluonhq.com/products/javafx/
+1. Extract to a folder of your choice.
+1. Add all needed modules to the following command.
+1. jlink --module-path "[javafx-jmods folder]" --add-modules java.base,javafx.controls,jdk.httpserver --output jre-11-huedeepbot --strip-debug --compress 2 --no-header-files --no-man-pages
+1. You now have your own jre in the jre-11-huedeepbot folder.
