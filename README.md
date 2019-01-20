@@ -14,7 +14,7 @@ The light sequences are defined in the sequences.json file.
 | "s" "v": 0.0-1.0					                | -1 is for setting the value from before executing the sequence       |
 | "transitionTime": 0,1,2,3,4....           | Transition time in 100ms steps                                       |
 
-# Example
+### Example
 ```json
 {
   "sequences":{
