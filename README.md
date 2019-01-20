@@ -1,10 +1,8 @@
 # Readme
-## Allowed values for variables in sequences.json
+The http-API for calling sequences runs on port 8000. 
+The light sequences are defined in the sequences.json file. 
 
-"type": "light" | "sleep"\
-	for "light" -> "light-id" & "r" & "g" & "b" & "transitionTime"\
-			or  -> "light-id" & "h" & "s" & "v" & "transitionTime"\
-	for "sleep" -> "duration"\
+## Allowed values for variables in sequences.json
 	
 | Key                                       | Description                                                          |
 |-------------------------------------------|----------------------------------------------------------------------|
@@ -20,12 +18,12 @@
 ```json
 {
   "sequences":{
-    "LichtAus": [
+    "sequenceName1": [
       { "type": "light", "light-id": 1, "r": 0, "g": 0, "b": 0, "transitionTime": 0},
       { "type": "sleep", "duration": 5000},
       { "type": "light", "light-id": 1, "r": -1, "g": -1, "b": -1, "transitionTime": 500}
     ],
-    "Blitz":	[
+    "sequenceName2":	[
       { "type": "light", "light-id": 1, "r": 255, "g": 255, "b": 255, "transitionTime": 0},
       { "type": "sleep", "duration": 50},
       { "type": "light", "light-id": 1, "r": -1, "g": -1, "b": -1, "transitionTime": 0}
