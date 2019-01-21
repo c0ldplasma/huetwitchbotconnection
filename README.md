@@ -8,7 +8,7 @@ The light sequences are defined in the sequences.json file.
 |-------------------------------------------|----------------------------------------------------------------------|
 | "type": "light" &#124; "sleep"            | Action type. Use light-id, r, g, b, transitionTime or light-id, h, s, v, transitionTime for type light. Use duration for type sleep. |
 | "duration": 0-2147483647			            | Do nothing for x milliseconds                                        |
-| "light-id": 0-(lightCount - 1) &#124; -1  | -1 is for selecting all lights                                       | 
+| "light-id": 0 to (lightCount - 1) &#124; -1  | -1 is for selecting all lights                                       | 
 | "r" "g" "b": 0-255 &#124; -1              | -1 is for setting the value from before executing the sequence       |
 | "h": 0-360						                    | -1 is for setting the value from before executing the sequence       |
 | "s" "v": 0.0-1.0					                | -1 is for setting the value from before executing the sequence       |
