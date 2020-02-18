@@ -1,4 +1,4 @@
-# Readme
+# Hue Twitch-Bot Connection
 The http-API for calling sequences runs on port 8000. The response to every http request to the API is defined in the response.txt file (default is a single space character).
 The light sequences are defined in the sequences.json file. 
 
