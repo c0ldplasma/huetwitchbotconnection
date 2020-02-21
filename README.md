@@ -65,4 +65,4 @@ For debugging the HueDeepbot.exe change headerType from 'gui' to 'console' in th
 ## License
 
 This project is licensed under the MIT License. See LICENSE file. 
-Exceptions are the Icon which is from https://www.iconfinder.com/icons/406712/rgb_icon and the Hue SDK Binaries in the lib folder. The License of those binaries also can be found in the lib folder.
+Exceptions are the Icon which is from https://www.iconfinder.com/icons/406712/rgb_icon and the Hue SDK binaries in the lib folder. The License of those binaries also can be found in the lib folder.
