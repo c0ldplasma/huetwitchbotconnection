@@ -35,7 +35,7 @@ The light sequences are defined in the sequences.json file.
 ## Deployment
 ### Java 11+
 
-The changes in the licence model and the distribution of java made by oracle made it necessary to bundle a Java JRE with the Application. Furthermore it is not possible to use the OracleJDK anymore. Instead it is needed to use a OpenJDK version. Since Java 11 OracleJDK and OpenJDK are functionally identical, but differ in the license. Basically OracleJDK is now only for paid customers of Oracle while OpenJDK is completely free to use. (no claim to correctness)
+The changes in the licence model and the distribution of java made by oracle made it necessary to bundle a Java JRE with the Application. Furthermore it is not possible to use the OracleJDK anymore. Instead it is needed to use a OpenJDK version. Since Java 11 OracleJDK and OpenJDK are functionally identical, but differ in the license. Basically OracleJDK is now only for paid customers of Oracle while OpenJDK is completely free to use. (no claim for correctness)
 
 #### Building the custom JRE
 
