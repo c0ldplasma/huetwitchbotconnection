@@ -23,7 +23,7 @@ launch4j {
     mainClassName = 'com.plasmarized.huedeepbot.main.MainWrapper'
     icon = "${projectDir}/icons/icon.ico"
     copyConfigurable = project.tasks.jar.outputs.files
-    bundledJrePath = 'jre-11-huedeepbot'
+    bundledJrePath = 'lib/jre-11-huedeepbot'
     bundledJre64Bit = true
     headerType = 'gui'
 }
