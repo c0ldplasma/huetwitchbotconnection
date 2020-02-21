@@ -39,7 +39,7 @@ The changes in the licence model and the distribution of java made by oracle mad
 
 #### Building the custom JRE
 
-A custom JRE can be built with the jlink tool included in the JDK.
+A custom JRE can be built with the jlink tool included in the OpenJDK 11.
 
 1. Download javafx-jmods from https://gluonhq.com/products/javafx/
 1. Extract to a folder of your choice.
