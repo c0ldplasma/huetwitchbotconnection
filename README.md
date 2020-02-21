@@ -61,3 +61,8 @@ Since version 0.0.13 the gradle build system is used. Gradle version 5.1.1.
 1. Rename/copy the launch4j folder to HueDeepbot-[version] and zip it.
 
 For debugging the HueDeepbot.exe change headerType from 'gui' to 'console' in the build.gradle file.
+
+## License
+
+This project is licensed under the MIT License. See LICENSE file. 
+Exceptions are the Icon which is from https://www.iconfinder.com/icons/406712/rgb_icon and the Hue SKD Binaries in the lib folder. The License of those binaries also can be found in the lib folder.
